@@ -467,6 +467,15 @@ starsContainer.innerHTML = starHTML;
     document.getElementById('home-section').style.display = (section === 'home') ? 'block' : 'none';
     document.getElementById('about-section').style.display = (section === 'about') ? 'block' : 'none';
 
+
+      document.querySelector('button').addEventListener('click', function () {
+    const query = document.getElementById('search-input').value.trim();
+    if (query) {
+      // Redirect or handle search
+      window.location.href = `/search?q=${encodeURIComponent(query)}`;
+    }
+  });
+      
     // Manage active button
     document.getElementById('homeButton').classList.toggle('active', section === 'home');
     document.getElementById('aboutButton').classList.toggle('active', section === 'about');
