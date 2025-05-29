@@ -111,20 +111,20 @@
   box-shadow: 0 0 10px yellow;
 }
 
-  .app {
-    transition: all 0.3s ease;
-  }
+  .search-bar {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px 20px;
+  font-size: 16px;
+  border: 2px solid #4CAF50;
+  border-radius: 25px;
+  outline: none;
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  color: #2e7d32;
+  background-color: #e8f5e9;
+}
 
-  .blurred {
-    filter: blur(3px);
-    opacity: 0.4;
-  }
-
-  .highlighted {
-    transform: scale(1.03);
-    z-index: 2;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  }
   
     .app-container {
       display: flex;
@@ -349,8 +349,8 @@
     <button onclick="showSection('about')">About Us</button>
     <button onclick="window.open('https://t.me/officialhacker52', '_blank')">Telegram</button>
   </div>
-  <input type="text" id="searchInput" placeholder="Search apps..." oninput="filterApps(this.value)" style="width: 100%; padding: 10px; margin-bottom: 10px; font-size: 16px;" />
-  
+  <input type="text" id="searchInput" class="search-bar" placeholder="Search apps...">
+
 
   <div id="home-section">
     <div class="app-container">
@@ -485,24 +485,43 @@ starsContainer.innerHTML = starHTML;
     document.getElementById('about-section').style.display = (section === 'about') ? 'block' : 'none';
 
 
-      function filterApps(searchText) {
-    const apps = document.querySelectorAll('.app');
-    const query = searchText.toLowerCase();
+      const searchInput = document.getElementById('searchInput');
+  const appContainer = document.getElementById('appContainer');
+  const apps = Array.from(document.querySelectorAll('.app'));
+
+  searchInput.addEventListener('input', () => {
+    const query = searchInput.value.toLowerCase().trim();
+
+    const matched = [];
+    const unmatched = [];
 
     apps.forEach(app => {
-      const text = app.innerText.toLowerCase();
-      if (query && text.includes(query)) {
-        app.classList.add('highlighted');
-        app.classList.remove('blurred');
-      } else if (query) {
-        app.classList.remove('highlighted');
-        app.classList.add('blurred');
+      const appName = app.querySelector('strong').innerText.toLowerCase();
+
+      if (appName.includes(query) && query !== '') {
+        matched.push(app);
+        app.style.filter = 'none';
+        app.style.opacity = '1';
+        app.style.pointerEvents = 'auto';
       } else {
-        app.classList.remove('highlighted');
-        app.classList.remove('blurred');
+        unmatched.push(app);
+        app.style.filter = 'blur(4px)';
+        app.style.opacity = '0.5';
+        app.style.pointerEvents = 'none';
       }
     });
-  }
+
+    if (query === '') {
+      apps.forEach(app => {
+        app.style.filter = 'none';
+        app.style.opacity = '1';
+        app.style.pointerEvents = 'auto';
+      });
+      apps.forEach(app => appContainer.appendChild(app));
+    } else {
+      matched.concat(unmatched).forEach(app => appContainer.appendChild(app));
+    }
+  });
       
     // Manage active button
     document.getElementById('homeButton').classList.toggle('active', section === 'home');
