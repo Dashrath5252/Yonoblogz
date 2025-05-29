@@ -111,6 +111,21 @@
   box-shadow: 0 0 10px yellow;
 }
 
+  .app {
+    transition: all 0.3s ease;
+  }
+
+  .blurred {
+    filter: blur(3px);
+    opacity: 0.4;
+  }
+
+  .highlighted {
+    transform: scale(1.03);
+    z-index: 2;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  }
+  
     .app-container {
       display: flex;
       flex-direction: column;
@@ -334,6 +349,8 @@
     <button onclick="showSection('about')">About Us</button>
     <button onclick="window.open('https://t.me/officialhacker52', '_blank')">Telegram</button>
   </div>
+  <input type="text" id="searchInput" placeholder="Search apps..." oninput="filterApps(this.value)" style="width: 100%; padding: 10px; margin-bottom: 10px; font-size: 16px;" />
+  
 
   <div id="home-section">
     <div class="app-container">
@@ -468,13 +485,24 @@ starsContainer.innerHTML = starHTML;
     document.getElementById('about-section').style.display = (section === 'about') ? 'block' : 'none';
 
 
-      document.querySelector('button').addEventListener('click', function () {
-    const query = document.getElementById('search-input').value.trim();
-    if (query) {
-      // Redirect or handle search
-      window.location.href = `/search?q=${encodeURIComponent(query)}`;
-    }
-  });
+      function filterApps(searchText) {
+    const apps = document.querySelectorAll('.app');
+    const query = searchText.toLowerCase();
+
+    apps.forEach(app => {
+      const text = app.innerText.toLowerCase();
+      if (query && text.includes(query)) {
+        app.classList.add('highlighted');
+        app.classList.remove('blurred');
+      } else if (query) {
+        app.classList.remove('highlighted');
+        app.classList.add('blurred');
+      } else {
+        app.classList.remove('highlighted');
+        app.classList.remove('blurred');
+      }
+    });
+  }
       
     // Manage active button
     document.getElementById('homeButton').classList.toggle('active', section === 'home');
